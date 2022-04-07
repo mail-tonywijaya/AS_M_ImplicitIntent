@@ -5,10 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,19 +50,46 @@ public class MainActivity extends AppCompatActivity {
 
     public void tampilKalkulator(View view)
     {
-        try
+        ArrayList<HashMap<String,Object>> items =new ArrayList<HashMap<String,Object>>();
+        final PackageManager pm = getPackageManager();
+
+        List<PackageInfo> packs = pm.getInstalledPackages(0);
+
+        for (PackageInfo pi : packs)
         {
-            Intent kalkulatorIntent = new Intent(Intent.ACTION_MAIN);
-            kalkulatorIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            String packageName = pi.packageName.toString();
 
-            ComponentName cn = new ComponentName("com.android.calculator2", "com.android.calculator2.Calculator");
-            kalkulatorIntent.setComponent(cn);
+            String packageName_lowerCase = packageName.toLowerCase();
 
-            startActivity(kalkulatorIntent);
+            Log.d("*tw*", packageName_lowerCase);
+
+            if (packageName_lowerCase.contains("calcul"))
+            {
+                HashMap<String, Object> map = new HashMap<String, Object>();
+
+                map.put("appName", pi.applicationInfo.loadLabel(pm));
+                map.put("packageName", pi.packageName);
+
+                items.add(map);
+            }
         }
-        catch (ActivityNotFoundException anfe)
+
+        int item_size = items.size();
+
+        if (item_size >= 1)
         {
-            Toast.makeText(getApplicationContext(), "Aplikasi tidak ditemukan", Toast.LENGTH_LONG).show();
+            String packageName = (String) items.get(0).get("packageName");
+
+            Intent i = pm.getLaunchIntentForPackage(packageName);
+
+            if (i != null)
+            {
+                startActivity(i);
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(), "Tidak ditemukan aplikasi kalkulator", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
