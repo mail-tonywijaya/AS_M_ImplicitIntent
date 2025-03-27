@@ -31,13 +31,11 @@
                 android:layout_height="wrap_content"
                 android:text="Kalender"
                 android:onClick="tampilKalender"/>
-
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="tampilBrowser"
                 android:text="Browser" />
-
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
